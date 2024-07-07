@@ -5,6 +5,8 @@ import os
 import sqlite3
 from sqlite3 import Error
 import datetime
+from datetime import timedelta
+
 
 API_TOKEN = 'TOKEN'
 
@@ -81,13 +83,10 @@ def parse_time(time_str):
 def generate(date_time, lightEnable):
     if lightEnable:
         closest_off = min(offs, key=lambda x: abs(parse_time(x) - date_time) if parse_time(x) > date_time else timedelta.max)
-        time_difference = (parse_time(closest_off) - date_time).total_seconds() // 60
-        return f"Наступне вимкнення через {time_difference//60}г. {time_difference%60}хв."
+        return f"Наступне вимкнення: {parse_time(closest_off).strftime('%H:%M')}"
     else:
         soonest_on = min(ons, key=lambda x: abs(parse_time(x) - date_time) if parse_time(x) > date_time else timedelta.max)
-        time_difference1 = (parse_time(ons[soonest_on]) - date_time).total_seconds() // 60
-        time_difference2 = (parse_time(soonest_on) - date_time).total_seconds() // 60
-        return f"Наступне увімкнення через {time_difference1//60}г. {time_difference1%60}хв.\nабо\n{time_difference2//60}г. {time_difference2%60}хв."
+        return f"Наступне увімкнення: {parse_time(ons[soonest_on]).strftime('%H:%M')}~{parse_time(soonest_on).strftime('%H:%M')}"
 
 
 
